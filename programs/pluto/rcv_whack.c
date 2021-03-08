@@ -658,7 +658,8 @@ whack_handle(int whackctlfd)
 
 
         /* okay, check for CBOR sequence */
-        if(n <= 12 || memcmp(msg_buf, cbor_opsn_magic, 12) != 0) {
+        if(n <= sizeof(cbor_opsn_magic) ||
+                memcmp(msg_buf, cbor_opsn_magic, sizeof(cbor_opsn_magic)) != 0) {
             u_int32_t *bu32 = (u_int32_t*)msg_buf;
             ugh = builddiag("ignoring message from whack[size=%ld] with bad magic %08x/%08x/%08x"
                             , n
