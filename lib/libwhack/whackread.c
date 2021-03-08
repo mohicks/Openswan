@@ -584,8 +584,6 @@ err_t whack_cbor_decode_msg(struct whack_message *wm, unsigned char *buf, size_t
        item.uDataType != QCBOR_TYPE_MAP) {
       return "malformed map at level 0";
     }
-    //whack_cbor_consume_item(&qdc, &item);
-    //return "fun";
 
     /* keep track of how many items */
     elemCount = item.val.uCount;
@@ -602,6 +600,7 @@ err_t whack_cbor_decode_msg(struct whack_message *wm, unsigned char *buf, size_t
         /* consume value, which is probably empty map */
         whack_cbor_consume_item(&qdc, &item);
         break;
+
       case WHACK_SHUTDOWN:
         wm->whack_shutdown = TRUE;
         whack_cbor_consume_item(&qdc, &item);
