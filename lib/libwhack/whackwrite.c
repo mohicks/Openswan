@@ -76,8 +76,6 @@ struct whackpacker {
 #define CBOR_DEBUG(fmt, ...)  do {} while(0)
 #endif
 
-#define OK(x) ugh = (x); if(ugh) goto bad
-
 #if 0
 static void whack_cbor_encode_empty_map(QCBOREncodeContext *qec)
 {
@@ -202,13 +200,13 @@ err_t whack_cbor_encode_msg(struct whack_message *wm, unsigned char *buf, size_t
 {
   size_t outlen;
   QCBOREncodeContext qec;
-  err_t ugh= NULL;
   QCBORError e;
 
   UsefulBuf into = {buf, (unsigned long)*plen};
   QCBOREncode_Init(&qec, into);
 
-  OK(whack_cbor_magic_header(&qec));
+  if (whack_cbor_magic_header(&qec))
+    return "CBOR encoding error";
 
   QCBOREncode_OpenMap(&qec);
   if(wm->whack_status) {
@@ -371,18 +369,13 @@ err_t whack_cbor_encode_msg(struct whack_message *wm, unsigned char *buf, size_t
 
   /* close the array */
   e = QCBOREncode_FinishGetSize(&qec, &outlen);
-  if(e != QCBOR_SUCCESS) {
-    ugh = "encoding failed";
-    return ugh;
-  }
+  if(e != QCBOR_SUCCESS)
+    return "CBOR encoding failed";
 
   if(plen) {
     *plen = outlen;
   }
   return NULL;
-
- bad:
-  return "CBOR encoding error";
 }
 
 int

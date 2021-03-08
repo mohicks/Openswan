@@ -76,7 +76,6 @@ struct whackpacker {
 #define CBOR_DEBUG(fmt, ...)  do {} while(0)
 #endif
 
-#define OK(x) ugh = (x); if(ugh) goto bad
 /*
 ** DECODING
 **
