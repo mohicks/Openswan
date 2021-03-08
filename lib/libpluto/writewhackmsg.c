@@ -73,6 +73,7 @@ bool writewhackrecord(unsigned char *buf, int buflen)
 
     if(fwrite(buf, buflen, 1, whackrecordfile) < 1) {
 	DBG_log("writewhackrecord: fwrite error when writing buf");
+	return FALSE;
     }
     fflush(whackrecordfile);
 

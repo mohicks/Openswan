@@ -110,7 +110,9 @@ static int send_whack_msg_to_file(struct starter_config *cfg, struct whack_messa
     if(whack_cbor_encode_msg(msg, sendbuf, &msg_len) != NULL) {
         return -1;
     }
-    writewhackrecord(sendbuf, msg_len);
+    if (writewhackrecord(sendbuf, msg_len) != TRUE) {
+        return -1;
+    }
     return 0;
 }
 
