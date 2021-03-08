@@ -540,7 +540,6 @@ void whack_cbor_process_connection(QCBORDecodeContext *qdc
  */
 err_t whack_cbor_decode_msg(struct whack_message *wm, unsigned char *buf, size_t *plen)
 {
-    err_t ugh = "broken";
     UsefulBufC todecode = {buf, (unsigned long)*plen};
     QCBORDecodeContext qdc;
     QCBORItem   item;
@@ -722,9 +721,7 @@ err_t whack_cbor_decode_msg(struct whack_message *wm, unsigned char *buf, size_t
     *plen = used;
 
     /* success */
-    ugh = NULL;
-
-    return ugh;
+    return NULL;
 }
 
 void
