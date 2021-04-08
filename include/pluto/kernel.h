@@ -213,11 +213,6 @@ extern struct raw_iface *find_raw_ifaces6(void);
 extern int fmt_common_shell_out(char *buf, int blen, struct connection *c
 				, const struct spd_route *sr, struct state *st);
 
-#ifdef KLIPS_MAST
-/* KLIPS/mast/pfkey things */
-extern bool pfkey_plumb_mast_device(int mast_dev);
-#endif
-
 /* calculate the suffix for logging */
 extern const char *kernel_command_verb_suffix(struct state *st
                                               , const struct spd_route *sr);
@@ -392,13 +387,6 @@ compatible_overlapping_connections(struct connection *a, struct connection *b)
 		&& LIN(POLICY_OVERLAPIP, a->policy)
 		&& LIN(POLICY_OVERLAPIP, a->policy);
 }
-
-#ifdef KLIPS
-extern const struct kernel_ops klips_kernel_ops;
-#endif
-#ifdef KLIPS_MAST
-extern const struct kernel_ops mast_kernel_ops;
-#endif
 
 extern bool kernel_overlap_supported(void);
 extern const char *kernel_if_name(void);

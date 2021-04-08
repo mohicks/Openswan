@@ -78,7 +78,6 @@ d.ipsec.conf/strictcrlpolicy.xml
 d.ipsec.conf/forwardcontrol.xml
 d.ipsec.conf/rp_filter.xml
 d.ipsec.conf/syslog.xml
-d.ipsec.conf/klipsdebug.xml
 d.ipsec.conf/plutodebug.xml
 d.ipsec.conf/uniqueids.xml
 d.ipsec.conf/plutorestartoncrash.xml

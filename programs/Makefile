@@ -34,10 +34,6 @@ SUBDIRS+=ikeping examples policy
 # is not installed.
 SUBDIRS+=readwriteconf
 
-ifeq ($(USE_KLIPS),true)
-SUBDIRS+= _startklips _updown.klips
-SUBDIRS+=spi eroute spigrp tncfg klipsdebug pf_key
-endif
 ifeq ($(USE_MAST),true)
 SUBDIRS+= _updown.mast
 endif

@@ -13,28 +13,15 @@
 # or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 # for more details.
 
-PATCHES=linux
-# where KLIPS goes in the kernel
-# note, some of the patches know the last part of this path
-KERNELKLIPS=$(KERNELSRC)/net/ipsec
-KERNELCRYPTODES=$(KERNELSRC)/crypto/ciphers/des
-KERNELLIBFREESWAN=$(KERNELSRC)/lib/libfreeswan
-KERNELLIBZLIB=$(KERNELSRC)/lib/zlib
-KERNELINCLUDE=$(KERNELSRC)/include
-
 MAKEUTILS=packaging/utils
 ERRCHECK=${MAKEUTILS}/errcheck
-KVUTIL=${MAKEUTILS}/kernelversion
-KVSHORTUTIL=${MAKEUTILS}/kernelversion-short
 
 SUBDIRS?=lib programs
 
 clean::
-	-(cd ${OPENSWANSRCDIR} && $(MAKE) modclean && $(MAKE) mod26clean)
 	-${MAKE} -C tests clean
 
 distclean:	clean
-	rm -f out.kpatch
 	if [ -f umlsetup.sh ]; then source umlsetup.sh; if [ -d "$$POOLSPACE" ]; then rm -rf $$POOLSPACE; fi; fi
 
 install_file_list:
@@ -91,7 +78,7 @@ distarchive: packagingprep
 # USE_ variables determine if features are compiled into Openswan.
 # export them so that "make env" can get at them
 export USE_IPSECPOLICY USE_IKEPING
-export USE_KEYRR USE_KLIPS USE_NETKEY USE_VENDORID
+export USE_KEYRR USE_NETKEY USE_VENDORID
 export USE_AGGRESSIVE USE_XAUTH USE_XAUTHPAM
 export USE_NAT_TRAVERSAL USE_NAT_TRAVERSAL_TRANSPORT_MODE USE_LDAP
 export USE_LIBCURL
@@ -100,4 +87,3 @@ export USE_TAPROOM USE_OBJDIR
 export HAVE_STATSD USE_DYNAMICDNS
 export USE_IPSEC_CONNECTION_LIMIT IPSEC_CONNECTION_LIMIT
 export USE_LIBNSS USE_FIPSCHECK USE_MODP_RFC5114 USE_NM USE_LABELED_IPSEC
-export USE_MAST USE_SAREF_KERNEL

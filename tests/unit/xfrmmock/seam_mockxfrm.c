@@ -1,6 +1,6 @@
 #define NETKEY_SUPPORT
-#include "linux26/xfrm.h"
-#include "linux26/rtnetlink.h"
+#include <linux/xfrm.h>
+#include <linux/rtnetlink.h>
 #include "kernel.h"
 #include "kernel_forces.h"
 #include "kernel_netlink.h"

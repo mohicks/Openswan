@@ -38,7 +38,7 @@ FUNCTIONALTESTS+=19-builtnss
 
 # running 'make check KEEPGOING=1' will run through all tests w/o stopping
 ERROR_CHECK=$(if ${KEEPGOING},,set -e;)
-clean check pcapupdate:
+clean check pcapupdate update:
 	@${ERROR_CHECK} for unittest in ${FUNCTIONALTESTS}; do ${MAKE} -C $$unittest $@; done
 
 testlist:

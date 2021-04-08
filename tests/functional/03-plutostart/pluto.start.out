@@ -2,8 +2,6 @@ adjusting ipsec.d to OUTPUT
 Starting Pluto (Openswan Version VERSION
 LEAK_DETECTIVE support [disabled]
 OCF support for IKE [disabled]
-SAref support [disabled]: Protocol not available
-SAbind support [disabled]: Protocol not available
 HAVE_STATSD notification support not compiled in
 Setting NAT-Traversal port-4500 floating to off
    port floating activation criteria nat_t=0/port_float=1

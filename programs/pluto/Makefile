@@ -99,11 +99,11 @@ DISTSRC = \
 	ikev1_crypto.c ikev1_nss.c \
         ikev2.c ikev2_alg.c ikev2_parent.c ikev2_parent_I1.c ikev2_parent_R1.c ikev2_child.c ikev2_derived_keys.c ikev2_notify.c \
 	ikev2_prfplus.c spdb_v2_struct.c \
-	kernel.c kernel_ops.c kernel.h \
+	kernel.c kernel_ops.c \
 	${NETKEY_SRCS} \
-	${KLIPS_SRCS} ${MAST_SRCS} ${WIN2K_SRCS} \
+	${WIN2K_SRCS} \
 	kernel_noklips.c kernel_noklips.h \
-	ike_alg.c ike_alg_status.c ike_alg.h ikeping.c \
+	ike_alg_status.c ikeping.c \
 	ike_alg_aes.c ike_alginit.c ikev2_rsa.c ikev2_psk.c ikev2_x509.c  \
 	rcv_whack.c rcv_whack.h \
 	$(IPSECPOLICY_DIST_SRCS) \
@@ -145,7 +145,7 @@ OBJSPLUTO += myid.o ipsec_doi.o
 OBJSPLUTO += ikev1.o ikev1_main.o   ikev1_quick.o
 OBJSPLUTO += ikev2.o ikev2_alg.o ikev2_parent.o ikev2_child.o spdb_v2_struct.o ikev2_notify.o
 OBJSPLUTO += ikeping.o kernel.o kernel_ops.o
-OBJSPLUTO += $(NETKEY_OBJS) $(BSDKAME_OBJS) ${KLIPS_OBJS} ${MAST_OBJS} ${WIN2K_OBJS} ${PFKEYv2_OBJS}
+OBJSPLUTO += $(NETKEY_OBJS) $(BSDKAME_OBJS) ${WIN2K_OBJS} ${PFKEYv2_OBJS}
 OBJSPLUTO += kernel_noklips.o rcv_whack.o
 OBJSPLUTO += ${IPSECPOLICY_OBJS} demux.o msgdigest.o keymgmt.o signatures.o dnskey.o
 OBJSPLUTO += pluto_crypt.o crypt_utils.o build_ke.o crypt_ke.o crypt_dh.o crypt_start_dh.o

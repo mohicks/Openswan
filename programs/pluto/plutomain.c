@@ -63,7 +63,7 @@
 #include "packet.h"
 #include "demux.h"  /* needs packet.h */
 #include "pluto/server.h"
-#include "kernel.h"	/* needs connections.h */
+#include "kernel.h"
 #include "log.h"
 #include "keys.h"
 #include "secrets.h"
@@ -935,7 +935,6 @@ main(int argc, char **argv)
   				        IPSECLIBDIR"/ikeping",
 				        IPSECLIBDIR"/_include",
 					IPSECLIBDIR"/_keycensor",
-					IPSECLIBDIR"/klipsdebug",
 					IPSECLIBDIR"/look",
 					IPSECLIBDIR"/newhostkey",
 					IPSECLIBDIR"/pf_key",
@@ -952,11 +951,9 @@ main(int argc, char **argv)
 					IPSECLIBDIR"/showpolicy",
 					IPSECLIBDIR"/spi",
 					IPSECLIBDIR"/spigrp",
-					IPSECLIBDIR"/_startklips",
 					IPSECLIBDIR"/_startnetkey",
 					IPSECLIBDIR"/tncfg",
 					IPSECLIBDIR"/_updown",
-					IPSECLIBDIR"/_updown.klips",
 					IPSECLIBDIR"/_updown.mast",
 					IPSECLIBDIR"/_updown.netkey",
 					IPSECLIBDIR"/verify",
@@ -1035,11 +1032,6 @@ main(int argc, char **argv)
        }
 #else
 	openswan_log("OCF support for IKE [disabled]");
-#endif
-
-   /* Check for SAREF support */
-#ifdef KLIPS_MAST
-        saref_init();
 #endif
 
 #ifdef HAVE_LIBNSS

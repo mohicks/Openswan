@@ -14,7 +14,7 @@
 #
 #
 # TODO: Some creative ifeq ($(BUILDENV,xxx) to automatically determine
-# where we are building on and disable things (eg KLIPS on OSX)
+# where we are building on and disable things
 
 #  Doc:		man make
 #  Doc:		http://www.gnu.org/software/make/manual/make.html
@@ -131,31 +131,6 @@ FINALRCDIR?=$(shell for d in $(INC_RCDIRS) ; \
 		fi ; done ; echo $(INC_RCDEFAULT) )
 RCDIR?=$(DESTDIR)$(FINALRCDIR)
 
-
-
-### kernel pathnames
-
-# Kernel location:  where patches are inserted, where kernel builds are done.
-
-# this is a hack using the wildcard to look for existence of a file/dir
-ifneq ($(wildcard /usr/src/linux-2.6),)
-KERNELSRC?=/usr/src/linux-2.6
-else
-ifneq ($(wildcard /usr/src/linux-2.4),)
-KERNELSRC?=/usr/src/linux-2.4
-else
-KERNELSRC?=/lib/modules/$(shell uname -r)/build
-endif
-endif
-
-# where kernel configuration outputs are located
-KCFILE=$(KERNELSRC)/.config
-ACFILE=$(KERNELSRC)/include/linux/autoconf.h
-VERFILE=$(KERNELSRC)/include/linux/version.h
-
-# where KLIPS kernel module is install
-OSMOD_DESTDIR?=net/ipsec
-
 # What command to use to load the modules. openwrt does not have modprobe
 MODPROBE?=modprobe -q
 
@@ -199,7 +174,6 @@ GCC_LINT ?= -DGCC_LINT
 USERCOMPILE?=${GCCOPTIONS}
 # on fedora/rhel
 #USERCOMPILE?=-g -O2 -g -pipe -Wall -Wp,-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4  -m64 -mtune=generic -fPIE -pie -DSUPPORT_BROKEN_ANDROID_ICS
-KLIPSCOMPILE=-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 -Wformat -Wformat-security -Werror=format-security -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -DCONFIG_KLIPS_ALG -DDISABLE_UDP_CHECKSUM
 # Additional debugging for developers (warning: can crash openswan!)
 #USERCOMPILE?=-g -DLEAK_DETECTIVE ${LIBEFENCE}
 # You can also run this before starting openswan on glibc systems:
@@ -211,28 +185,6 @@ USERLINK?=-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro -Wl,-z,now ${USERLINK
 #USERLINK=-g -pie
 
 PORTINCLUDE?=
-
-# command used to link/copy KLIPS into kernel source tree
-# There are good reasons why this is "ln -s"; only people like distribution
-# builders should ever change it.
-KLIPSLINK=ln -s -f
-
-# extra options for use in kernel build
-KERNMAKEOPTS=
-
-# kernel Makefile targets to be done before build
-# Can be overridden if you are *sure* your kernel doesn't need them.  (2.2.xx
-# and later reportedly do not.)
-KERNDEP=dep
-KERNCLEAN=clean
-
-# kernel make name:  zImage for 2.0.xx, bzImage for 2.2.xx and later, and
-# boot on non-x86s (what ever happened to standards?)
-INC_B=$(shell test -d $(DIRIN22) && echo b)
-KERNEL=$(shell if expr " `uname -m`" : ' i.86' >/dev/null ; \
-	then echo $(INC_B)zImage ; \
-	else echo boot ; \
-	fi)
 
 # look for XMLTO command
 XMLTO?=$(shell which xmlto | grep / | head -n1)
@@ -302,41 +254,22 @@ USE_IKEPING?=true
 # Except this to change in Q1 2011
 USE_KEYRR?=true
 
-# Build support for Linux 2.4 and 2.6 KLIPS kernel level IPsec support
-# for pluto
-USE_KLIPS?=true
-
-# Build support for 2.6 KLIPS/MAST variation in pluto
-USE_MAST?=true
-
-# MAST requires KLIPS
-ifeq ($(USE_MAST),true)
-USE_KLIPS=true
-endif
-
-# MAST is generally a prerequisite for SAREF support in applications
 USE_SAREF_KERNEL?=false
 
 # Build support for Linux NETKEY (XFRM) kernel level IPsec support for
 # pluto (aka "native", "kame")
 USE_NETKEY?=true
 
-# KLIPS needs PFKEYv2, but sometimes we want PFKEY without KLIPS
 # Note: NETLINK does not use PFKEY, but it does share some code,
 # so it is required for NETKEY as well.
-ifeq ($(USE_KLIPS),true)
-USE_PFKEYv2=true
-else
 ifeq ($(USE_NETKEY),true)
 USE_PFKEYv2=true
-endif
 endif
 
 # include support for BSD/KAME IPsec in pluto (on *BSD and OSX)
 USE_BSDKAME?=false
 ifeq ($(USE_BSDKAME),true)
 USE_NETKEY=false
-USE_KLIPS=false
 endif
 
 # Build support for sending Openswan Vendor IDs
@@ -543,10 +476,6 @@ endif
 
 
 ### paths within the source tree
-
-KLIPSINC=${OPENSWANSRCDIR}/linux/include
-KLIPSSRCDIR=${OPENSWANSRCDIR}/linux/net/ipsec
-#KLIPSSRCDIR=/mara1/git/klips/net/ipsec
 
 LIBOPENSWANDIR=${OPENSWANSRCDIR}/lib/libopenswan
 LIBOPENSWAN=${OBJDIRTOP}/lib/libopenswan/libopenswan.a

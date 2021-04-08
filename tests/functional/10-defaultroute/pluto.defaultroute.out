@@ -3,8 +3,6 @@ adjusting ipsec.d to XX
 Starting Pluto (Openswan Version VERSION
 LEAK_DETECTIVE support [disabled]
 OCF support for IKE [disabled]
-SAref support [disabled]: Protocol not available
-SAbind support [disabled]: Protocol not available
 HAVE_STATSD notification support not compiled in
 Setting NAT-Traversal port-4500 floating to off
    port floating activation criteria nat_t=0/port_float=1
@@ -21,6 +19,9 @@ ike_alg_register_prf(): Activating prf-hmac-md5: Ok (ret=0)
 starting up X cryptographic helpers
 Using 'no_kernel' interface code on
   loaded CA cert file 'strongswanCert.pem' (CERT bytes)
+Could not change to directory 'bob/aacerts': No such file or directory
+Could not change to directory 'bob/ocspcerts': No such file or directory
+Could not change to directory 'bob/crls': 2 No such file or directory
   loading certificate from bobCert.pem 
   loaded host cert file 'bob/certs/bobCert.pem' (CERT bytes)
 my side id: is wildcard
@@ -66,7 +67,6 @@ loaded private key for keyid: PPK_RSA:AwEAAbXtb/A339 C44A 54EA F8CD A71A 5BC3 31
 000 "nat-t":   ike_life: 3600s; ipsec_life: 1200s; rekey_margin: 180s; rekey_fuzz: 100%; keyingtries: 1; firstmsgid: 0 
 000 "nat-t":   policy: RSASIG+ENCRYPT+TUNNEL+PFS+IKEv2ALLOW+SAREFTRACK; prio: 16,0; interface: ; kind=CK_PERMANENT
 000 "nat-t":   newest ISAKMP SA: #0; newest IPsec SA: #0; eroute owner: #0;
-000  
 000  
 forgetting secrets
 "nat-t": deleting connection

@@ -21,7 +21,6 @@ me='ipsec _startnetkey'                # for messages
 
 modules=/proc/modules
 kamepfkey=/proc/net/pfkey
-ipsecpfkey=/proc/net/ipsec/version
 
 info=/dev/null
 log=daemon.error
@@ -153,22 +152,6 @@ defaultinterface() {
 }
 
 # main line
-
-# since klips/mast now calls _startklips, we know we're called to use netkey
-# so if we find klips/mast, try to unload it or die
-if test -f $ipsecpfkey
-then
-        echo "Warning: found KLIPS/MAST stack loaded"
-        echo -n Trying to unload KLIPS/MAST module:
-        rmmod ipsec 2> /dev/null
-
-        if test -f $ipsecpfkey
-        then
-                echo "FAILURE to unload KLIPS/MAST module. Use protostack=klips or protostack=mast, or recompile kernel without builtin KLIPS/MAST support"
-                exit 1
-        fi
-fi
-
         if test -f $modules
         then
                 # load hardware random related modules - some changed names over time

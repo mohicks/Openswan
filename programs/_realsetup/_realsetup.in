@@ -28,7 +28,6 @@ lock=/var/run/pluto/ipsec_setup.pid
 info=/var/run/pluto/ipsec.info
 sysflags=/proc/sys/net/ipsec
 modules=/proc/modules
-ipsecversion=/proc/net/ipsec_version
 kamepfkey=/proc/net/pfkey
 
 #pluto searches the current directory, so this is required for making it selinux compliant
@@ -83,18 +82,7 @@ netkey=false
 # which kernel are we using?
 case $IPSECprotostack in
 auto)
-    # for now, you can not auto-select mast
-    #if test -f /proc/sys/net/ipsec/debug_mast
-    if false
-    then
-    	netkey=false; klips=false; mast=true;
-    elif test -f $kamepfkey
-	then
-	    netkey=true; klips=false;
-	else
-	    netkey=false; klips=true;
-    fi;;
-    
+    netkey=true;;
 klips)  netkey=false; klips=true;  mast=false;;
 mast)   netkey=false; klips=false; mast=true;;
 netkey) 
@@ -170,26 +158,6 @@ LOGONLY="logger -p $IPSECsyslog -t ipsec_setup"
 
 KILLKLIPS=":"
 
-if $klips
-then
-        #
-        # don't use ifconfig here,  there may be thousands of
-        # interfaces to parse through,  much quicker to go
-        # direct to the source
-        #
-    KILLKLIPS='ifl=`grep -v NULL /proc/net/ipsec_tncfg 2> /dev/null | sed -n -e "/^ipsec/s/ .*//p" ` ;
-        test "X$ifl" != "X" &&
-        for i in  $ifl ;
-        do
-		ip link set $i down ;
-		ip addr flush dev $i ;
-		ipsec tncfg --detach --virtual $i ;
-	done ;
-	test -r /proc/net/ipsec_klipsdebug && ipsec klipsdebug --none ;
-	test -d /proc/net/ipsec/eroute && ipsec eroute --clear ;
-	test -d /proc/net/ipsec/spi && ipsec spi --clear'
-fi
-
 if $netkey
 then
 	KILLKLIPS='
@@ -247,6 +215,12 @@ case "$1" in
 
 	perform ">" $info
 
+	if $klips || $mast
+	then
+		echo "ERROR: klips and mast are deprecated.  Use the protostack=auto or protostack=netkey"
+		exit 1
+	fi
+
 	# overridemtu is ignored on 2.6, so warn the user.
 	# no longer warn about %defaultroute, because it has some use on
 	# netkey for orienting ourselves when using left=%defaultroute
@@ -267,28 +241,6 @@ case "$1" in
 				--log "\"$IPSECsyslog\"" \
 				$IPSECinterfaces "||" \
 			"{" rm -f $lock ";" exit 1 ";" "}"
-	fi
-
-	if $klips || $mast
-	then
-		# here we go
-		perform ipsec _startklips \
-				--info $info \
-				--debug "\"$IPSECklipsdebug\"" \
-				--omtu "\"$IPSECoverridemtu\"" \
-				--fragicmp "\"$IPSECfragicmp\"" \
-				--hidetos "\"$IPSEChidetos\"" \
-				--log "\"$IPSECsyslog\"" \
-				$IPSECinterfaces "||" \
-			"{" rm -f $lock ";" exit 1 ";" "}"
-
-# Paul: Shouldn't the below tests be outside the klips test?
-
-		perform test -f $ipsecversion "||" \
-			test -f $kamepfkey "||" "{" \
-			echo "\"OOPS, should have aborted!  Broken shell!\"" ";" \
-			exit 1 ";" \
-			"}"
 	fi
 
 	# misc pre-Pluto setup
@@ -466,22 +418,12 @@ case "$1" in
 		eroutes=`ipsec auto --status 2> /dev/null | grep -c -i -e "ipsec sa established" -e "child sa established"`
 	fi
 
-	if test -r $ipsecversion
-	then
-		klips=yes
-	elif test -r $modules
-	then
-		klips=maybe
-	else
-		klips=none
-	fi
-		
 	if test -r $kamepfkey
 	then
 		lk26sec=yes
 	fi
 
-	if test "$hassublock" -a "$haslock" -a "$plutokind" = "normal" -a \( "$klips" = "yes" -o "$lk26sec" = "yes" \)  -a "$hasinfo"
+	if test "$hassublock" -a "$haslock" -a "$plutokind" = "normal" -a "$lk26sec" = "yes" -a "$hasinfo"
 	then
 		echo "IPsec running"  " - pluto pid: `cat $plutopid 2>/dev/null`"
 		echo "pluto pid `cat $plutopid`"

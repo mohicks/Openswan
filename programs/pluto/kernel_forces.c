@@ -34,13 +34,14 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <stdint.h>
+#include <linux/netlink.h>
+#include <linux/rtnetlink.h>
 #include <linux/pfkeyv2.h>
+#include <linux/xfrm.h>
 #include <unistd.h>
 #include <sysqueue.h>
 
 #include "kameipsec.h"
-#include "linux26/rtnetlink.h"
-#include <xfrm.h>
 
 #include <openswan.h>
 #include <openswan/pfkeyv2.h>

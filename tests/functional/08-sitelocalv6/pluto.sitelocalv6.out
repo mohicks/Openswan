@@ -2,8 +2,6 @@ adjusting ipsec.d to XX
 Starting Pluto (Openswan Version VERSION
 LEAK_DETECTIVE support [disabled]
 OCF support for IKE [disabled]
-SAref support [disabled]: Protocol not available
-SAbind support [disabled]: Protocol not available
 HAVE_STATSD notification support not compiled in
 Setting NAT-Traversal port-4500 floating to off
    port floating activation criteria nat_t=0/port_float=1
@@ -59,6 +57,5 @@ loading named conns: host-host
 000 "host-host":   ike_life: 3600s; ipsec_life: 28800s; rekey_margin: 540s; rekey_fuzz: 100%; keyingtries: 0; firstmsgid: 0 
 000 "host-host":   policy: RSASIG+ENCRYPT+TUNNEL+PFS+IKEv2ALLOW+SAREFTRACK; prio: 128,128; interface: ; kind=CK_PERMANENT
 000 "host-host":   newest ISAKMP SA: #0; newest IPsec SA: #0; eroute owner: #0;
-000  
 000  
 "host-host": deleting connection

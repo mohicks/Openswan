@@ -72,7 +72,7 @@ void
 init_kernel(void)
 {
     struct utsname un;
-#if defined(NETKEY_SUPPORT) || defined(KLIPS) || defined(KLIPS_MAST)
+#if defined(NETKEY_SUPPORT)
     struct stat buf;
 #endif
 
@@ -82,7 +82,7 @@ init_kernel(void)
 
     switch(kern_interface) {
     case AUTO_PICK:
-#if defined(NETKEY_SUPPORT) || defined(KLIPS) || defined(KLIPS_MAST)
+#if defined(NETKEY_SUPPORT)
 	/* If we detect NETKEY and KLIPS, we can't continue */
 	if(stat("/proc/net/pfkey", &buf) == 0 &&
 	   stat("/proc/net/ipsec/spi/all", &buf) == 0) {
@@ -107,32 +107,6 @@ init_kernel(void)
 	    break;
 	} else
 	    openswan_log("No Kernel XFRM/NETKEY interface detected");
-        FALL_THROUGH;   /* FALL THROUGH */
-#endif
-
-#if defined(KLIPS)
-    case USE_KLIPS:
-	if (stat("/proc/net/ipsec/spi/all", &buf) == 0) {
-	    kern_interface = USE_KLIPS;
-	    openswan_log("Using KLIPS IPsec interface code on %s"
-			 , kversion);
-	    kernel_ops = &klips_kernel_ops;
-	    break;
-	} else
-	    openswan_log("No Kernel KLIPS interface detected");
-        FALL_THROUGH;   /* FALL THROUGH */
-#endif
-
-#if defined(KLIPS_MAST)
-    case USE_MASTKLIPS:
-        if (stat("/proc/sys/net/ipsec/debug_mast", &buf) == 0) {
-	    kern_interface = USE_MASTKLIPS;
-	    openswan_log("Using KLIPSng (mast) IPsec interface code on %s"
-			 , kversion);
-	    kernel_ops = &mast_kernel_ops;
-	    break;
-	} else
-	    openswan_log("No Kernel MASTKLIPS interface detected");
         FALL_THROUGH;   /* FALL THROUGH */
 #endif
 

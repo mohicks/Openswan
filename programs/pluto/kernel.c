@@ -1545,12 +1545,6 @@ static err_t setup_esp_sa(struct connection *c
 
 
     said_next->outif   = -1;
-#ifdef KLIPS_MAST
-    if(st->st_esp.attrs.encapsulation == ENCAPSULATION_MODE_TRANSPORT
-        && useful_mastno != -1) {
-        said_next->outif = MASTTRANSPORT_OFFSET+useful_mastno;
-    }
-#endif
     said_next->text_said = text_said;
     said_next->sa_lifetime = c->sa_ipsec_life_seconds;
 
@@ -2927,12 +2921,6 @@ delete_ipsec_sa(struct state *st USED_BY_KLIPS, bool inbound_only USED_BY_KLIPS)
 		    {
 			(void) shunt_eroute(c, sr, sr->routing, ERO_REPLACE, "replace with shunt");
 		    }
-
-#ifdef KLIPS_MAST
-		    /* in mast mode we must also delete the iptables rule */
-		    if (kern_interface == USE_MASTKLIPS)
-			    (void) sag_eroute(st, sr, ERO_DELETE, "delete");
-#endif
 		}
 	    }
 #ifdef HAVE_LABELED_IPSEC

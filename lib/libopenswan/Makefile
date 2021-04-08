@@ -39,12 +39,6 @@ SRCS=addrtoa.c addrtot.c addrtypeof.c anyaddr.c atoaddr.c \
 
 SRCS+=sanitizestring.c pfkey_print.c pfkey_sock.c pfkey_error.c
 
-ifeq ($(USE_KLIPS),true)
-KLIPS_DEFS=-DKLIPS
-# Linux always supports udpfromto
-UDPFROMTO_SRCS=udpfromto.c
-endif
-
 ifeq ($(USE_BSDKAME),true)
 # BSD always supports udpfromto
 UDPFROMTO_SRCS=udpfromto.c
@@ -74,7 +68,7 @@ INCLUDES+=${NSS_HDRDIRS}  ${FIPS_HDRDIRS}
 # Original flags
 CFLAGS+=${PORTINCLUDE} -I.
 CFLAGS+=-I${OPENSWANSRCDIR} -DDEBUG
-CFLAGS+=${PFKEYV2_DEFS} ${KLIPS_DEFS}
+CFLAGS+=${PFKEYV2_DEFS}
 CFLAGS+= -I${OPENSWANSRCDIR}/include ${PORTINCLUDE} $(USERCOMPILE) ${CROSSFLAGS} ${INCLUDES}
 CFLAGS+= -Wall
 #CFLAGS+= -Wconversion
@@ -251,6 +245,6 @@ checkprograms:
 # this should be a generic process.
 # Gather dependencies caused by explicit #includes within .c files
 depend:
-	(ls $(wildcard $(SRCS)) $(wildcard $(addprefix ${KLIPSSRCDIR}/,$(SRCS)))) | grep '\.c' | xargs $(CC) -MM ${CFLAGS} ${PORTINCLUDE} ${ALLFLAGS} | sed -e 's,${OPENSWANSRCDIR},../..,g' >Makefile.depend
+	(ls $(wildcard $(SRCS))) | grep '\.c' | xargs $(CC) -MM ${CFLAGS} ${PORTINCLUDE} ${ALLFLAGS} | sed -e 's,${OPENSWANSRCDIR},../..,g' >Makefile.depend
 
 -include ${srcdir}Makefile.depend

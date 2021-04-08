@@ -41,7 +41,6 @@
 #include "id.h"
 #include "pluto/connections.h"
 #include "pluto/state.h"
-#include "kernel.h"
 #include "kernel_pfkey.h"
 #include "timer.h"
 #include "log.h"

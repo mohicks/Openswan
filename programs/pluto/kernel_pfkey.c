@@ -835,26 +835,8 @@ static int kernelop2klips(enum pluto_sadb_operations op)
 	break;
     }
 
-#if defined(KLIPS_MAST)
-    /* In mast mode, we never want to set an eroute.
-     * Setting the POLICYONLY disables eroutes. */
-    if (kernel_ops->type == USE_MASTKLIPS)
-	klips_flags |= SADB_X_SAFLAGS_POLICYONLY;
-#endif
-
     return klips_op | (klips_flags << KLIPS_OP_FLAG_SHIFT);
 }
-
-#ifdef KLIPS
-void klips_pfkey_register(void)
-{
-    klips_register_proto(K_SADB_SATYPE_AH, "AH");
-    klips_register_proto(K_SADB_SATYPE_ESP, "ESP");
-    can_do_IPcomp = FALSE;  /* until we get a response from KLIPS */
-    klips_register_proto(K_SADB_X_SATYPE_COMP, "IPCOMP");
-    klips_register_proto(K_SADB_X_SATYPE_IPIP, "IPIP");
-}
-#endif
 
 bool
 pfkey_raw_eroute(const ip_address *this_host
@@ -926,19 +908,6 @@ pfkey_raw_eroute(const ip_address *this_host
 	    return FALSE;
 	}
     }
-#if defined(KLIPS_MAST)
-    /* in mast mode, deletes also include the extension flags */
-    else if (kernel_ops->type == USE_MASTKLIPS) {
-	if (!(pfkey_build(pfkey_sa_build(&extensions[K_SADB_EXT_SA]
-					 , K_SADB_EXT_SA
-					 , spi	/* in network order */
-					 , 0, 0, 0, 0, klips_op >> KLIPS_OP_FLAG_SHIFT)
-			  , "pfkey_sa del flow", text_said, extensions)))
-	{
-	    return FALSE;
-	}
-    }
-#endif
 
     if (!pfkeyext_address(K_SADB_X_EXT_ADDRESS_SRC_FLOW, &sflow_ska
 			  , "pfkey_addr_sflow", text_said, extensions))
@@ -1020,17 +989,6 @@ bool pfkey_add_sa(struct kernel_sa *sa, bool replace)
 	if(!success) return FALSE;
     }
 
-#ifdef KLIPS_MAST
-    if(sa->ref != IPSEC_SAREF_NULL || sa->refhim != IPSEC_SAREF_NULL) {
-	    success = pfkey_build(pfkey_saref_build(&extensions[K_SADB_X_EXT_SAREF]
-						    , sa->ref
-						    , sa->refhim)
-				  , "pfkey_key_sare Add SA"
-				  , sa->text_said, extensions);
-	    if(!success) return FALSE;
-    }
-#endif
-
     if(sa->outif != -1) {
 	    success = pfkey_outif_build(&extensions[K_SADB_X_EXT_PLUMBIF],sa->outif);
 	    success = pfkey_build(success, "pfkey_outif_build", sa->text_said, extensions);
@@ -1107,14 +1065,6 @@ bool pfkey_add_sa(struct kernel_sa *sa, bool replace)
 	    if (error) {
 		plog("success on unparsable message - cannot happen");
 	    }
-#ifdef KLIPS_MAST
-	    if(replies[K_SADB_X_EXT_SAREF]) {
-		    struct sadb_x_saref *sar = (struct sadb_x_saref *)replies[K_SADB_X_EXT_SAREF];
-
-		    sa->ref = sar->sadb_x_saref_me;
-		    sa->refhim = sar->sadb_x_saref_him;
-	    }
-#endif
     }
     return success;
 }
@@ -1876,38 +1826,6 @@ void pfkey_remove_orphaned_holds(int transport_proto
         }
     }
 }
-
-#ifdef KLIPS_MAST
-bool
-pfkey_plumb_mast_device(int mast_dev)
-{
-	struct sadb_ext *extensions[K_SADB_EXT_MAX + 1];
-	int error;
-
-	pfkey_extensions_init(extensions);
-
-	if((error = pfkey_msg_hdr_build(&extensions[0],
-					K_SADB_X_PLUMBIF,
-					0, 0,
-					++pfkey_seq, pid))) {
-		return FALSE;
-	}
-
-	if((error = pfkey_outif_build(&extensions[K_SADB_X_EXT_PLUMBIF], mast_dev))) {
-		return FALSE;
-	}
-
-	if(!finish_pfkey_msg(extensions, "configure_mast_device", "", NULL)) {
-		return FALSE;
-	}
-
-
-
-	return TRUE;
-}
-#endif /* KLIPS_MAST */
-
-
 
 #endif /* PFKEY */
 

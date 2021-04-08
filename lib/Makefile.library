@@ -1,7 +1,5 @@
 # -*- makefile -*-
 
-KLIPSD=${OPENSWANSRCDIR}/linux/include
-KLIPSSRCDIR=${OPENSWANSRCDIR}/linux/net/ipsec
 MANSRCDIR=${OPENSWANSRCDIR}/lib/libopenswan
 
 include ${OPENSWANSRCDIR}/Makefile.common
@@ -13,7 +11,6 @@ else
 BISON=bison
 endif
 
-VPATH+= ${KLIPSSRCDIR}
 OSDEP?=$(shell uname -s | tr 'A-Z' 'a-z')
 
 # NSS things
@@ -21,7 +18,7 @@ DEFINES+=${NSS_FLAGS}    ${FIPS_FLAGS}
 INCLUDES+=${NSS_HDRDIRS}  ${FIPS_HDRDIRS}
 
 # Original flags
-INCLUDES+=-I. -I${KLIPSSRCDIR} -I${KLIPSD} -I${OPENSWANSRCDIR}
+INCLUDES+=-I. -I${OPENSWANSRCDIR}
 INCLUDES+=-I${OPENSWANSRCDIR}/include
 CFLAGS+=${PORTINCLUDE} ${INCLUDES} ${CROSSFLAGS}
 CFLAGS+=-DDEBUG
@@ -43,10 +40,6 @@ CFLAGS+= ${DEFINES}
 
 ifeq ($(USE_NAT_TRAVERSAL),true)
 CFLAGS+= -DNAT_TRAVERSAL
-endif
-
-ifeq ($(USE_KLIPS),true)
-CFLAGS+= -DKLIPS
 endif
 
 ifeq ($(USE_IKEv1),true)
